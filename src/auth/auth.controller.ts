@@ -9,6 +9,7 @@ import {
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { Public } from '../core/decorators/public.decorator';
 import { AuthService } from './auth.service';
+import { SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD_DEFAULT } from '../database/seed-defaults';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 
@@ -24,7 +25,8 @@ export class AuthController {
     operationId: 'authLogin',
     summary: 'Login com e-mail e senha',
     description:
-      'Retorna um access token JWT. Envie nas rotas protegidas como `Authorization: Bearer <token>`.',
+      'Retorna um access token JWT. Envie nas rotas protegidas como `Authorization: Bearer <token>`. ' +
+      `Exemplo (seed): \`${SEED_ADMIN_EMAIL}\` / \`${SEED_ADMIN_PASSWORD_DEFAULT}\` quando a migration não usou \`SEED_ADMIN_PASSWORD\` — altere logo a senha.`,
   })
   @ApiOkResponse({ type: LoginResponseDto })
   @ApiBadRequestResponse({ description: 'Erro de validação' })

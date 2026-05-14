@@ -5,10 +5,11 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { RequestIdInterceptor } from './interceptors/request-id.interceptor';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { HealthController } from './health.controller';
+import { RootController } from './root.controller';
 
 @Global()
 @Module({
-  controllers: [HealthController],
+  controllers: [HealthController, RootController],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
