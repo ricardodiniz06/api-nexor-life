@@ -130,7 +130,7 @@ export class UsersController {
     operationId: 'usersUpdate',
     summary: 'Atualizar utilizador',
     description:
-      'Administrador: pode alterar e-mail, senha e role. Utilizador: apenas o próprio registo — e-mail e senha (não pode alterar role).',
+      'Administrador: nome, sobrenome, e-mail, senha e role. Utilizador: apenas o próprio registo — nome, sobrenome, e-mail e senha (não pode alterar role).',
   })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiBody({ type: UpdateUserDto })

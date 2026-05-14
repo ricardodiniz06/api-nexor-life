@@ -10,6 +10,18 @@ import {
 import { UserRole } from '../entities/user.entity';
 
 export class CreateUserDto {
+  @ApiProperty({ example: 'Maria' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  nome!: string;
+
+  @ApiProperty({ example: 'Silva' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  sobrenome!: string;
+
   @ApiProperty({ example: 'maria.silva@hospital.org' })
   @IsEmail()
   @MaxLength(320)

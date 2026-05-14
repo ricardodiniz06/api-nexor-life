@@ -14,6 +14,10 @@ import type { UpdateUserDto } from './dto/update-user.dto';
 
 const BCRYPT_ROUNDS = 10;
 
+function normalizeNameSegment(s: string): string {
+  return s.trim().replace(/\s+/g, ' ');
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -37,12 +41,16 @@ export class UsersService {
    * Cria utilizador já com hash (sementes/migrações internas).
    */
   async create(data: {
+    nome: string;
+    sobrenome: string;
     email: string;
     passwordHash: string;
     role: UserRole;
     createdBy: string | null;
   }): Promise<User> {
     const entity = this.repo.create({
+      nome: normalizeNameSegment(data.nome),
+      sobrenome: normalizeNameSegment(data.sobrenome),
       email: data.email.toLowerCase(),
       passwordHash: data.passwordHash,
       role: data.role,
@@ -63,6 +71,8 @@ export class UsersService {
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
     const role = dto.role ?? UserRole.VIEWER;
     return this.create({
+      nome: dto.nome as string,
+      sobrenome: dto.sobrenome as string,
       email,
       passwordHash,
       role,
@@ -79,10 +89,12 @@ export class UsersService {
     const hasField =
       dto.email !== undefined ||
       dto.password !== undefined ||
-      dto.role !== undefined;
+      dto.role !== undefined ||
+      dto.nome !== undefined ||
+      dto.sobrenome !== undefined;
     if (!hasField) {
       throw new BadRequestException(
-        'Envie pelo menos um dos campos: email, password, role.',
+        'Envie pelo menos um dos campos: nome, sobrenome, email, password ou role.',
       );
     }
 
@@ -113,6 +125,13 @@ export class UsersService {
 
     if (dto.role !== undefined && isAdmin) {
       user.role = dto.role;
+    }
+
+    if (dto.nome !== undefined) {
+      user.nome = normalizeNameSegment(dto.nome);
+    }
+    if (dto.sobrenome !== undefined) {
+      user.sobrenome = normalizeNameSegment(dto.sobrenome);
     }
 
     if (dto.password !== undefined) {

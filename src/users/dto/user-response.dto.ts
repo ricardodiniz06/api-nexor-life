@@ -8,6 +8,12 @@ export class UserResponseDto {
   @ApiProperty({ example: 'jane@hospital.org' })
   email!: string;
 
+  @ApiProperty({ example: 'Maria', description: 'Primeiro nome' })
+  nome!: string;
+
+  @ApiProperty({ example: 'Silva', description: 'Sobrenome' })
+  sobrenome!: string;
+
   @ApiProperty({ enum: UserRole, example: UserRole.CLINICIAN })
   role!: UserRole;
 
@@ -27,6 +33,8 @@ export class UserResponseDto {
 export function toUserResponse(u: {
   id: string;
   email: string;
+  nome: string;
+  sobrenome: string;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
@@ -35,6 +43,8 @@ export function toUserResponse(u: {
   return {
     id: u.id,
     email: u.email,
+    nome: u.nome,
+    sobrenome: u.sobrenome,
     role: u.role,
     createdAt: u.createdAt.toISOString(),
     updatedAt: u.updatedAt.toISOString(),

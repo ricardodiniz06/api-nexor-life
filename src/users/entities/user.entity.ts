@@ -20,6 +20,13 @@ export class User {
   @Column({ type: 'varchar', length: 320, unique: true })
   email!: string;
 
+  /** Primeiro nome (API em português; coluna `nome`). */
+  @Column({ type: 'varchar', length: 120, default: '' })
+  nome!: string;
+
+  @Column({ type: 'varchar', length: 120, default: '' })
+  sobrenome!: string;
+
   @Column({ name: 'password_hash', type: 'varchar', length: 255 })
   passwordHash!: string;
 

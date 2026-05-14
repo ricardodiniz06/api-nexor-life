@@ -11,6 +11,20 @@ import { UserRole } from '../entities/user.entity';
 
 /** Atualização parcial — envie só os campos a alterar. */
 export class UpdateUserDto {
+  @ApiPropertyOptional({ example: 'Maria' })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  nome?: string;
+
+  @ApiPropertyOptional({ example: 'Santos' })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  sobrenome?: string;
+
   @ApiPropertyOptional({ example: 'novo.email@org.com' })
   @IsOptional()
   @IsEmail()

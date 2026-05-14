@@ -25,6 +25,8 @@ async function run(): Promise<void> {
     const passwordHash = await bcrypt.hash(pwd, 10);
     await repo.save(
       repo.create({
+        nome: 'Admin',
+        sobrenome: 'Sistema',
         email,
         passwordHash,
         role: UserRole.ADMIN,
