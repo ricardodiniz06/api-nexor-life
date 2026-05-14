@@ -11,6 +11,7 @@ describe('Nexor Life API (e2e)', () => {
     process.env.JWT_SECRET ??= 'unit-test-jwt-secret-must-be-at-least-32-chars';
     process.env.DATABASE_URL ??=
       'postgres://postgres:postgres@127.0.0.1:5432/nexor_life';
+    process.env.DB_SSL ??= 'false';
   });
 
   beforeEach(async () => {

@@ -7,6 +7,17 @@ import { parseSynchronizeFlag } from './parse-synchronize';
 
 const entityList = [User];
 
+/**
+ * Postgres em nuvem (ex.: Supabase) usa TLS; `rejectUnauthorized: false` aceita certificados
+ * sem cadeia completa verificável no cliente. Para Postgres local sem SSL: `DB_SSL=false`.
+ */
+function postgresSsl(): { rejectUnauthorized: boolean } | undefined {
+  if (process.env.DB_SSL === 'false') {
+    return undefined;
+  }
+  return { rejectUnauthorized: false };
+}
+
 function databaseUrlOrParts(): {
   url?: string;
   host?: string;
@@ -37,10 +48,12 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions &
   DataSourceOptions {
   const conn = databaseUrlOrParts();
   const synchronize = parseSynchronizeFlag(process.env.TYPEORM_SYNCHRONIZE);
+  const ssl = postgresSsl();
 
   return {
     type: 'postgres',
     ...conn,
+    ...(ssl !== undefined ? { ssl } : {}),
     entities: entityList,
     migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
     synchronize,

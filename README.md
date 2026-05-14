@@ -11,6 +11,31 @@ Backend NestJS para o **Nexor Life**, alinhado ao app Next.js (rotas em inglês 
 
 O **Docker Compose** deste projeto serve sobretudo para **reproduzir Postgres (e opcionalmente a API) na tua máquina** — não é o modelo obrigatório para produção. Em produção o objetivo é: **push para o Git → a plataforma faz build e deploy**; a URL da API e `DATABASE_URL` vêm do painel da nuvem.
 
+### Grátis ou “quase grátis” (pouco uso / MVP)
+
+Não precisas de cartão para **começar** em vários sítios; o trade-off é **limits**, **cold start** (primeiro pedido lento) ou **DB e API em sítios diferentes**:
+
+| Abordagem | Ideia |
+|-----------|--------|
+| **[Neon](https://neon.tech)** (Postgres grátis) + **[Render](https://render.com)** Web grátis | Crias o projeto na Neon, copias o `DATABASE_URL` para o serviço da API no Render (Dockerfile). Boa para testes e poucos utilizadores. |
+| **[Supabase](https://supabase.com)** (Postgres grátis) + API no **Render** / **Railway** | Mesmo padrão: só usas o Postgres do Supabase; a API é outro serviço (variável `DATABASE_URL`). |
+| **Só Render** (`render.yaml` deste repo) | Web Service pode ser grátis (adormece); confirma no site deles se o **Postgres** na tua conta ainda entra em plano gratuito — as regras mudam. |
+| **[Fly.io](https://fly.io)** | Há **crédito grátis** mensal; dá para API + Postgres pequeno dentro do limite. |
+
+Para **poucas chamadas e poucos dados**, o mais simples costuma ser **Neon (DB grátis) + Render (API grátis)** com `DATABASE_URL` colada no painel — sem depender do `render.yaml` para criar dois recursos na Render se quiseres evitar pagar Postgres lá.
+
+### Supabase (Postgres) + Render (API)
+
+**Sim — é uma combinação muito usada.** O Supabase expõe **Postgres**; a API Nest corre na **Render** e liga-se só com variáveis de ambiente.
+
+1. **Supabase** — Cria o projeto → **Project Settings → Database**. Copia a **connection string** (URI), em modo adequado a serviços persistentes costuma ser **Direct** (`porta 5432`). Cola na variável **`DATABASE_URL`** do serviço na Render (a string já inclui `?sslmode=require` ou equivalente — o driver `pg` aceita).
+2. **Render** — **New → Web Service** → liga o repo → escolhe **Docker** e o `Dockerfile` na raiz. **Não** precisas do Postgres da Render neste cenário (não uses o `render.yaml` com dupla base, ou remove o bloco `databases` / o `fromDatabase` e define só a Web Service com `DATABASE_URL` manual).
+3. **Variáveis na Render** (Environment do serviço `nexor-api` ou nome que deres):  
+   `DATABASE_URL` (secret do Supabase), `JWT_SECRET`, `FRONTEND_ORIGIN`, `API_BASE_PATH=api/v1`, `NODE_ENV=production`, `SWAGGER_ENABLED=false` (ou `true` se quiseres `/docs`).
+4. **Deploy** — O container corre migrations no arranque e inicia a app. Testa `GET /api/v1/health` na URL `*.onrender.com`.
+
+**Nota:** Reserva o **Auth / Row Level Security** do Supabase para o que fizeres no cliente Supabase; a **API Nest** usa o Postgres como qualquer servidor (`DATABASE_URL`). Se no futuro usares o Auth do Supabase no Next.js, isso é independente da API Nest — combinam por JWT ou por utilizadores na tua própria tabela `users`.
+
 ## Deploy na nuvem (PostgreSQL + API)
 
 Fluxo típico em qualquer PaaS:
