@@ -9,7 +9,10 @@ import {
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { Public } from '../core/decorators/public.decorator';
 import { AuthService } from './auth.service';
-import { SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD_DEFAULT } from '../database/seed-defaults';
+import {
+  SEED_ADMIN_EMAIL,
+  SEED_ADMIN_PASSWORD_DEFAULT,
+} from '../database/seed-defaults';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 
