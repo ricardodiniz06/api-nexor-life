@@ -1,0 +1,55 @@
+import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { config as loadEnv } from 'dotenv';
+import { DataSource, type DataSourceOptions } from 'typeorm';
+import { join } from 'node:path';
+import { User } from '../users/entities/user.entity';
+import { parseSynchronizeFlag } from './parse-synchronize';
+
+const entityList = [User];
+
+function databaseUrlOrParts(): {
+  url?: string;
+  host?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  database?: string;
+} {
+  loadEnv();
+  const url = process.env.DATABASE_URL;
+  if (url) {
+    return { url };
+  }
+  return {
+    host: process.env.DB_HOST ?? 'localhost',
+    port: parseInt(process.env.DB_PORT ?? '5432', 10),
+    username: process.env.DB_USER ?? 'postgres',
+    password: process.env.DB_PASSWORD ?? 'postgres',
+    database: process.env.DB_NAME ?? 'nexor_life',
+  };
+}
+
+/**
+ * Shared options for Nest runtime and TypeORM CLI (`data-source.ts`).
+ * Never enable synchronize in production — use migrations only.
+ */
+export function buildTypeOrmOptions(): TypeOrmModuleOptions &
+  DataSourceOptions {
+  const conn = databaseUrlOrParts();
+  const synchronize = parseSynchronizeFlag(process.env.TYPEORM_SYNCHRONIZE);
+
+  return {
+    type: 'postgres',
+    ...conn,
+    entities: entityList,
+    migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
+    synchronize,
+    logging: process.env.DB_LOGGING === 'true',
+  };
+}
+
+export function buildDataSource(): DataSource {
+  loadEnv();
+  const options = buildTypeOrmOptions();
+  return new DataSource(options);
+}
