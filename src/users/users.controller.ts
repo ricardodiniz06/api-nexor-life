@@ -49,8 +49,7 @@ export class UsersController {
   @ApiOperation({
     operationId: 'usersList',
     summary: 'Listar usuários (administrador)',
-    description:
-      'Paginação: `page` começa em 1; `limit` com máximo 100.',
+    description: 'Paginação: `page` começa em 1; `limit` com máximo 100.',
   })
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })

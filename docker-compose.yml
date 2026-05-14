@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nexor_life
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - nexor_pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,6 +14,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${API_PORT:-3000}:3000'
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nexor_life
+      JWT_SECRET: ${JWT_SECRET:-desenvolvimento-altere-em-producao-minimo-32-caracteres}
+      PORT: 3000
+      API_BASE_PATH: api/v1
+      SWAGGER_ENABLED: 'true'
+      FRONTEND_ORIGIN: '*'
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   nexor_pg_data: {}

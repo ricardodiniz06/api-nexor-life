@@ -13,6 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings 0",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -21,7 +22,11 @@
     "typeorm:migration:generate": "typeorm-ts-node-commonjs -p tsconfig.typeorm.json -d src/database/data-source.ts migration:generate",
     "typeorm:migration:run": "typeorm-ts-node-commonjs -p tsconfig.typeorm.json -d src/database/data-source.ts migration:run",
     "typeorm:migration:revert": "typeorm-ts-node-commonjs -p tsconfig.typeorm.json -d src/database/data-source.ts migration:revert",
-    "db:seed": "ts-node --project tsconfig.typeorm.json src/database/seed.ts"
+    "db:seed": "ts-node --project tsconfig.typeorm.json src/database/seed.ts",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f api",
+    "ci": "npm run lint:ci && npm run build && npm test"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

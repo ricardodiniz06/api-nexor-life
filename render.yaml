@@ -1,0 +1,33 @@
+# Blueprint Render — PostgreSQL gerido + API (Docker).
+# Deploy: Dashboard Render → New → Blueprint → liga o repositório Git onde este ficheiro existe.
+# Variáveis com sync: false pedem valor na primeira configuração (ou altera no painel depois do deploy).
+
+databases:
+  - name: nexor-postgres
+    databaseName: nexor_life
+
+services:
+  - type: web
+    name: nexor-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: API_BASE_PATH
+        value: api/v1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nexor-postgres
+          property: connectionString
+      # Definir no painel: segredo longo (≥32 caracteres) e URL do frontend Next.js em produção
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      # OpenAPI: false em produção; true só se quiseres /docs exposto
+      - key: SWAGGER_ENABLED
+        value: 'false'
