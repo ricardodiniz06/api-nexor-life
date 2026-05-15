@@ -1,41 +1,41 @@
 import 'reflect-metadata';
 import { config } from 'dotenv';
-import * as bcrypt from 'bcrypt';
 import dataSource from './data-source';
 import { SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD_DEFAULT } from './seed-defaults';
-import { User, UserRole } from '../users/entities/user.entity';
+import { User } from '../iam/entities/user.entity';
+import { Role } from '../iam/entities/role.entity';
+import { HashingService } from '../iam/authentication/services/hashing.service';
 
 config();
 
 /**
- * Optional bootstrap user — run only in dev/stage after migrations.
- * Never log {@link User.passwordHash} or raw passwords.
+ * Bootstrap opcional após migrations — nunca regista password em logs.
  */
 async function run(): Promise<void> {
   await dataSource.initialize();
+  const hashing = new HashingService();
   try {
-    const repo = dataSource.getRepository(User);
-    const email = SEED_ADMIN_EMAIL;
-    const existing = await repo.findOne({ where: { email } });
+    const userRepo = dataSource.getRepository(User);
+    const roleRepo = dataSource.getRepository(Role);
+    const email = SEED_ADMIN_EMAIL.toLowerCase();
+    const existing = await userRepo.findOne({ where: { email } });
     if (existing) {
       console.log('Seed skipped: admin user already exists.');
       return;
     }
+    const adminRole = await roleRepo.findOne({ where: { name: 'ADMIN' } });
     const pwd = process.env.SEED_ADMIN_PASSWORD ?? SEED_ADMIN_PASSWORD_DEFAULT;
-    const passwordHash = await bcrypt.hash(pwd, 10);
-    await repo.save(
-      repo.create({
-        nome: 'Admin',
-        sobrenome: 'Sistema',
+    const passwordHash = await hashing.hash(pwd);
+    await userRepo.save(
+      userRepo.create({
         email,
         passwordHash,
-        role: UserRole.ADMIN,
-        createdBy: null,
+        isActive: true,
+        roles: adminRole ? [adminRole] : [],
       }),
     );
-
     console.log(
-      `Seed done: ${SEED_ADMIN_EMAIL} (change password immediately).`,
+      `Seed done: ${SEED_ADMIN_EMAIL} (altere a senha imediatamente).`,
     );
   } finally {
     await dataSource.destroy();

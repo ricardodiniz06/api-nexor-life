@@ -178,7 +178,7 @@ Usa `src/database/data-source.ts` e `tsconfig.typeorm.json` (CommonJS adequado a
 
 6. **Commite** o arquivo de migration junto com a entidade.
 
-Exemplo de entidade + migration: `User` em `src/users/entities/user.entity.ts` e `src/database/migrations/1736889600000-CreateUsersTable.ts`.
+Exemplo de entidade + migration: `User` em `src/users/entities/user.entity.ts` e `src/database/migrations/1736889600000-User.ts`.
 
 **Produção:** rode migrations sobre o build (`npm run build`), apontando o CLI para `dist/database/data-source.js` (mesmas variáveis da app).
 

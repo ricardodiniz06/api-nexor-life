@@ -2,15 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { PatientsModule } from './patients/patients.module';
-import { DashboardModule } from './dashboard/dashboard.module';
-import { ReportsModule } from './reports/reports.module';
-import { IndicatorsModule } from './indicators/indicators.module';
-import { AlertsModule } from './alerts/alerts.module';
-import { IntegrationsModule } from './integrations/integrations.module';
-import { SettingsModule } from './settings/settings.module';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -20,15 +12,7 @@ import { SettingsModule } from './settings/settings.module';
     }),
     CoreModule,
     DatabaseModule,
-    AuthModule,
-    UsersModule,
-    PatientsModule,
-    DashboardModule,
-    ReportsModule,
-    IndicatorsModule,
-    AlertsModule,
-    IntegrationsModule,
-    SettingsModule,
+    IamModule,
   ],
 })
 export class AppModule {}

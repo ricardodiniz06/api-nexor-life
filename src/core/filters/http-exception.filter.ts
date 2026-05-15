@@ -18,6 +18,17 @@ export type ApiErrorBody = {
   details?: unknown;
 };
 
+const httpStatusLabelsPt: Record<string, string> = {
+  BadRequest: 'Requisição inválida',
+  Unauthorized: 'Não autorizado',
+  Forbidden: 'Acesso negado',
+  NotFound: 'Não encontrado',
+  Conflict: 'Conflito',
+  UnprocessableEntity: 'Entidade não processável',
+  TooManyRequests: 'Muitas requisições',
+  InternalServerError: 'Erro interno do servidor',
+};
+
 /**
  * Uniform JSON errors for the Next.js frontend — do not log PHI/PII bodies here.
  */
@@ -57,7 +68,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const payload: ApiErrorBody = {
       statusCode: status,
       message,
-      error: errorName,
+      error: httpStatusLabelsPt[errorName] ?? errorName,
       path,
       timestamp: new Date().toISOString(),
       ...(request.requestId ? { requestId: request.requestId } : {}),

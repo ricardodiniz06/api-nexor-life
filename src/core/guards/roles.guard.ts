@@ -5,29 +5,35 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { type UserRole } from '../../users/entities/user.entity';
+import { type JwtPayload } from '../../iam/authentication/interfaces/jwt-payload.interface';
+import { IamErrorMessages } from '../../iam/common/messages/error-messages';
 import { ROLES_KEY } from '../constants';
-import { type JwtPayload } from '../../auth/interfaces/jwt-payload.interface';
 
+/**
+ * Guard legado por nome de papel — preferir {@link PermissionsGuard} em rotas novas.
+ * Suporta múltiplos papéis no JWT (`roles[]`).
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const required = this.reflector.getAllAndOverride<UserRole[] | undefined>(
+    const required = this.reflector.getAllAndOverride<string[] | undefined>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
     );
-    if (!required || required.length === 0) {
+    if (!required?.length) {
       return true;
     }
     const req = context.switchToHttp().getRequest<{ user?: JwtPayload }>();
     const user = req.user;
     if (!user) {
-      throw new ForbiddenException('Missing user context');
+      throw new ForbiddenException(IamErrorMessages.authorization.missingUser);
     }
-    if (!required.includes(user.role)) {
-      throw new ForbiddenException('Insufficient role');
+    const roles = user.roles ?? [];
+    const allowed = required.some((role) => roles.includes(role));
+    if (!allowed) {
+      throw new ForbiddenException(IamErrorMessages.authorization.insufficientRole);
     }
     return true;
   }

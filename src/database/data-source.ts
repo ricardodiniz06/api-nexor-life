@@ -3,6 +3,7 @@
  * - `npm run typeorm:migration:generate -- src/database/migrations/Name`
  * - `npm run typeorm:migration:run`
  * - `npm run typeorm:migration:revert`
+ * - `npm run schema:drop`
  *
  * After changing an entity, generate a migration, review SQL, run in dev, commit the file.
  * Never rely on `synchronize` outside ephemeral dev (`TYPEORM_SYNCHRONIZE=true`).
