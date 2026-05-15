@@ -1,17 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { Public } from './decorators/public.decorator';
 
 /** Responde em `GET /` (fora do prefixo `api/v1`) para evitar 404 no browser. */
-@ApiTags('root')
+@ApiExcludeController()
 @Controller()
 export class RootController {
   @Public()
   @Get()
-  @ApiOperation({
-    operationId: 'rootIndex',
-    summary: 'Informação mínima da API',
-  })
   index(): {
     service: string;
     api: string;
