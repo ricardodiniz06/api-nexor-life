@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { IamModule } from './iam/iam.module';
 import { PatientsModule } from './patients/patients.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ReportsModule } from './reports/reports.module';
@@ -20,8 +19,7 @@ import { SettingsModule } from './settings/settings.module';
     }),
     CoreModule,
     DatabaseModule,
-    AuthModule,
-    UsersModule,
+    IamModule,
     PatientsModule,
     DashboardModule,
     ReportsModule,

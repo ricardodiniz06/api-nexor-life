@@ -2,10 +2,16 @@ import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config as loadEnv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { join } from 'node:path';
-import { User } from '../users/entities/user.entity';
+import {
+  Permission,
+  ProfessionalProfile,
+  Role,
+  Session,
+  User,
+} from '../iam/entities';
 import { parseSynchronizeFlag } from './parse-synchronize';
 
-const entityList = [User];
+const entityList = [User, ProfessionalProfile, Role, Permission, Session];
 
 /**
  * Postgres em nuvem (ex.: Supabase) usa TLS; `rejectUnauthorized: false` aceita certificados

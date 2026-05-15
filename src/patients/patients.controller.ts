@@ -5,26 +5,25 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { Roles } from '../core/decorators/roles.decorator';
-import { RolesGuard } from '../core/guards/roles.guard';
-import { UserRole } from '../users/entities/user.entity';
+import { RequirePermissions } from '../iam/authorization/decorators/require-permissions.decorator';
+import { PermissionAction } from '../iam/authorization/enums/permission-action.enum';
+import { PermissionResource } from '../iam/authorization/enums/permission-resource.enum';
+import { PermissionsGuard } from '../iam/authorization/guards/permissions.guard';
 import { PatientsService } from './patients.service';
 import { PatientListResponseDto } from './dto/patient-list.dto';
 
 @ApiTags('patients')
 @ApiBearerAuth('access-token')
 @Controller('patients')
-@UseGuards(RolesGuard)
+@UseGuards(PermissionsGuard)
 export class PatientsController {
   constructor(private readonly patients: PatientsService) {}
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.CLINICIAN)
+  @RequirePermissions(PermissionResource.PATIENT, PermissionAction.READ)
   @ApiOperation({
     operationId: 'patientsList',
     summary: 'Diretório de pacientes (placeholder)',
-    description:
-      'Contrato estruturado para migração do Next.js (`/medical-records`) — sem dados clínicos sensíveis nas respostas até o modelo clínico existir.',
   })
   @ApiOkResponse({ type: PatientListResponseDto })
   list(): Promise<PatientListResponseDto> {
