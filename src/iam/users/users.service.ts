@@ -21,9 +21,15 @@ import {
   ACCOUNT_LOCK_MINUTES,
   MAX_FAILED_LOGIN_ATTEMPTS,
 } from '../authentication/constants';
+import {
+  PaginatedTypeOrmRepository,
+  type PaginatedResult,
+} from '../../database/pagination';
 import { IamErrorMessages } from '../common/messages/error-messages';
 import { type CreateUserDto } from './dto/create-user.dto';
+import { type IListQuery } from '../../common/decorators/list-query.decorator';
 import { type UpdateUserDto } from './dto/update-user.dto';
+import { USERS_LIST_CONFIG } from './users-list.config';
 
 const MSG = IamErrorMessages.users;
 
@@ -37,6 +43,7 @@ export class UsersService {
     @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly hashing: HashingService,
+    private readonly paginated: PaginatedTypeOrmRepository,
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
@@ -146,19 +153,8 @@ export class UsersService {
     return this.users.count();
   }
 
-  async findPage(
-    page: number,
-    limit: number,
-  ): Promise<{ rows: User[]; total: number }> {
-    const safeLimit = Math.min(Math.max(limit, 1), 100);
-    const safePage = Math.max(page, 1);
-    const [rows, total] = await this.users.findAndCount({
-      relations: { roles: true, professionalProfile: true },
-      order: { createdAt: 'DESC' },
-      skip: (safePage - 1) * safeLimit,
-      take: safeLimit,
-    });
-    return { rows, total };
+  findAll(query: IListQuery): Promise<PaginatedResult<User>> {
+    return this.paginated.findMany(this.users, USERS_LIST_CONFIG, query);
   }
 
   async updateById(

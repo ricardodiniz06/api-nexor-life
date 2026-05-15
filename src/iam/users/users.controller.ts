@@ -6,7 +6,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,10 +22,13 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { ApiListQuery } from '../../common/decorators/api-list-query.decorator';
+import {
+  ListQuery,
+  type IListQuery,
+} from '../../common/decorators/list-query.decorator';
 import { CurrentUser } from '../../core/decorators/current-user.decorator';
 import { PermissionAction } from '../authorization/enums/permission-action.enum';
 import { PermissionResource } from '../authorization/enums/permission-resource.enum';
@@ -66,23 +68,24 @@ export class UsersController {
   @Get()
   @RequirePermissions(PermissionResource.SYSTEM, PermissionAction.READ)
   @ApiOperation({
-    operationId: 'usersList',
+    operationId: 'usersFindAll',
     summary: 'Listar utilizadores (paginado)',
-    description: 'Paginação: `page` começa em 1; `limit` máximo 100.',
   })
-  @ApiQuery({ name: 'page', required: false })
-  @ApiQuery({ name: 'limit', required: false })
+  @ApiListQuery({
+    searchExample: 'cpf:5466607920,email:546,name:546',
+    filterExample: 'cpf:5466607920,isActive:true',
+  })
   @ApiOkResponse({ type: UserListResponseDto })
+  @ApiResponse({
+    status: 400,
+    description: 'Parâmetro de busca/filtro inválido',
+  })
   @ApiResponse({ status: 403, description: 'Sem permissão SYSTEM:READ' })
-  async list(
-    @Query() query: PaginationQueryDto,
-  ): Promise<UserListResponseDto> {
-    const page = query.page;
-    const limit = query.limit;
-    const { rows, total } = await this.users.findPage(page, limit);
+  async findAll(@ListQuery() query: IListQuery): Promise<UserListResponseDto> {
+    const result = await this.users.findAll(query);
     return {
-      data: rows.map((u) => toUserResponse(u)),
-      meta: { page, limit, total },
+      data: result.data.map((u) => toUserResponse(u)),
+      meta: result.meta,
     };
   }
 
@@ -90,8 +93,7 @@ export class UsersController {
   @ApiOperation({
     operationId: 'usersGetById',
     summary: 'Obter utilizador por ID',
-    description:
-      'Administrador (`SYSTEM:READ`) ou o próprio utilizador.',
+    description: 'Administrador (`SYSTEM:READ`) ou o próprio utilizador.',
   })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiOkResponse({ type: UserResponseDto })
@@ -135,16 +137,10 @@ export class UsersController {
   @ApiOperation({
     operationId: 'usersUpdate',
     summary: 'Atualizar utilizador',
-    description:
-      'Administrador (`SYSTEM:UPDATE`): todos os campos. Utilizador: apenas o próprio registo (sem papéis/estado/2FA).',
   })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ type: UserResponseDto })
-  @ApiResponse({ status: 400, description: 'Body vazio ou inválido' })
-  @ApiResponse({ status: 403, description: 'Acesso negado' })
-  @ApiResponse({ status: 404, description: 'Não encontrado' })
-  @ApiResponse({ status: 409, description: 'E-mail ou CPF em uso' })
   async update(
     @CurrentUser() auth: JwtPayload,
     @Param('id', ParseUUIDPipe) id: string,
@@ -160,14 +156,9 @@ export class UsersController {
   @ApiOperation({
     operationId: 'usersRemove',
     summary: 'Remover utilizador (soft delete)',
-    description:
-      'Revoga sessões e marca `deleted_at`. Não é permitido remover a própria conta.',
   })
   @ApiParam({ name: 'id', format: 'uuid' })
-  @ApiNoContentResponse({ description: 'Removido' })
-  @ApiResponse({ status: 400, description: 'Não pode remover a própria conta' })
-  @ApiResponse({ status: 403, description: 'Sem permissão SYSTEM:DELETE' })
-  @ApiResponse({ status: 404, description: 'Não encontrado' })
+  @ApiNoContentResponse()
   async remove(
     @CurrentUser() auth: JwtPayload,
     @Param('id', ParseUUIDPipe) id: string,

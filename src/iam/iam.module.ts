@@ -10,6 +10,7 @@ import { Session } from './entities/session.entity';
 import { User } from './entities/user.entity';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { AuthorizationModule } from './authorization/authorization.module';
+import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -24,11 +25,12 @@ import { UsersModule } from './users/users.module';
     AuthenticationModule,
     AuthorizationModule,
     UsersModule,
+    RolesModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AccessTokenGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
-  exports: [AuthenticationModule, AuthorizationModule, UsersModule],
+  exports: [AuthenticationModule, AuthorizationModule, UsersModule, RolesModule],
 })
 export class IamModule {}
