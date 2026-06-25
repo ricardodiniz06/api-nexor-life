@@ -10,7 +10,7 @@ import {
   type ValidatedCompanyData,
 } from '../lib/insurances.repository';
 
-const HEALTH_CNAE_PREFIXES = ['86', '87', '88'] as const;
+const HEALTH_CNAE_PREFIXES = ['6520', '655', '86', '87', '88'] as const;
 const HEALTH_CNAE_WARNING = 'Verifique se este é um convênio de saúde válido.';
 
 export type ValidateCnpjResult = {
