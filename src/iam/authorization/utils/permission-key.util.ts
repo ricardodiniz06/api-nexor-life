@@ -39,7 +39,9 @@ export function hasPermission(
   const requiredResource = String(resource);
   const requiredAction = String(action);
 
-  if (granted.includes(toPermissionKey(requiredResource, PermissionAction.ALL))) {
+  if (
+    granted.includes(toPermissionKey(requiredResource, PermissionAction.ALL))
+  ) {
     return true;
   }
   if (requiredAction === PermissionAction.ALL) {
@@ -48,5 +50,7 @@ export function hasPermission(
   if (granted.includes(toPermissionKey(requiredResource, requiredAction))) {
     return true;
   }
-  return granted.includes(toPermissionKey(requiredResource, PermissionAction.ALL));
+  return granted.includes(
+    toPermissionKey(requiredResource, PermissionAction.ALL),
+  );
 }

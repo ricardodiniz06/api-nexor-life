@@ -25,8 +25,10 @@ export const ListQuery = createParamDecorator(
     return {
       page,
       limit,
-      search: typeof q.search === 'string' && q.search.trim() ? q.search : undefined,
-      filter: typeof q.filter === 'string' && q.filter.trim() ? q.filter : undefined,
+      search:
+        typeof q.search === 'string' && q.search.trim() ? q.search : undefined,
+      filter:
+        typeof q.filter === 'string' && q.filter.trim() ? q.filter : undefined,
     };
   },
 );

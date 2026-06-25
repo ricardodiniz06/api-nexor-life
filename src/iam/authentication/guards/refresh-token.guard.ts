@@ -27,7 +27,9 @@ export class RefreshTokenGuard implements CanActivate {
     }>();
     const token = this.extractRefreshToken(request);
     if (!token) {
-      throw new UnauthorizedException(IamErrorMessages.auth.refreshTokenRequired);
+      throw new UnauthorizedException(
+        IamErrorMessages.auth.refreshTokenRequired,
+      );
     }
     const session = await this.sessions.validateRefreshToken(token);
     request.refreshToken = token;

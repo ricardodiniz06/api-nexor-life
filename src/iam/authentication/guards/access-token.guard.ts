@@ -17,9 +17,7 @@ export class AccessTokenGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY) {
     super();
   }
 
-  override canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> {
+  override canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -30,10 +28,7 @@ export class AccessTokenGuard extends AuthGuard(ACCESS_TOKEN_STRATEGY) {
     return super.canActivate(context) as boolean | Promise<boolean>;
   }
 
-  override handleRequest<TUser>(
-    err: Error | null,
-    user: TUser,
-  ): TUser {
+  override handleRequest<TUser>(err: Error | null, user: TUser): TUser {
     if (err ?? !user) {
       throw new UnauthorizedException(
         IamErrorMessages.authorization.missingUser,

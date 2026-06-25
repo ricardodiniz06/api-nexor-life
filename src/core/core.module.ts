@@ -10,8 +10,8 @@ import { RootController } from './root.controller';
 @Module({
   controllers: [HealthController, RootController],
   providers: [
-    { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: RequestIdInterceptor },
   ],
 })

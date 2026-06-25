@@ -2,6 +2,7 @@ import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config as loadEnv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { join } from 'node:path';
+import { Convenio } from '../convenios/entities';
 import {
   Permission,
   ProfessionalProfile,
@@ -11,7 +12,14 @@ import {
 } from '../iam/entities';
 import { parseSynchronizeFlag } from './parse-synchronize';
 
-const entityList = [User, ProfessionalProfile, Role, Permission, Session];
+const entityList = [
+  User,
+  ProfessionalProfile,
+  Role,
+  Permission,
+  Session,
+  Convenio,
+];
 
 /**
  * Postgres em nuvem (ex.: Supabase) usa TLS; `rejectUnauthorized: false` aceita certificados
@@ -62,6 +70,7 @@ export function buildTypeOrmOptions(): TypeOrmModuleOptions &
     ...(ssl !== undefined ? { ssl } : {}),
     entities: entityList,
     migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
+    migrationsTransactionMode: 'each',
     synchronize,
     logging: process.env.DB_LOGGING === 'true',
   };

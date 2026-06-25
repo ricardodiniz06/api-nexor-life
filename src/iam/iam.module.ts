@@ -31,6 +31,11 @@ import { UsersModule } from './users/users.module';
     { provide: APP_GUARD, useClass: AccessTokenGuard },
     { provide: APP_GUARD, useClass: PermissionsGuard },
   ],
-  exports: [AuthenticationModule, AuthorizationModule, UsersModule, RolesModule],
+  exports: [
+    AuthenticationModule,
+    AuthorizationModule,
+    UsersModule,
+    RolesModule,
+  ],
 })
 export class IamModule {}

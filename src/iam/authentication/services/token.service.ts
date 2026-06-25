@@ -39,7 +39,9 @@ export class TokenService {
     return `${sessionId}.${secret}`;
   }
 
-  parseRefreshToken(token: string): { sessionId: string; secret: string } | null {
+  parseRefreshToken(
+    token: string,
+  ): { sessionId: string; secret: string } | null {
     const dot = token.indexOf('.');
     if (dot <= 0) {
       return null;

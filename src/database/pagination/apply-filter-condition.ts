@@ -4,7 +4,11 @@ import { coerceFilterValue } from './coerce-filter-value';
 export type FilterCondition =
   | { kind: 'isNull' }
   | { kind: 'isNotNull' }
-  | { kind: 'compare'; operator: '=' | '>=' | '<=' | '>' | '<'; value: unknown };
+  | {
+      kind: 'compare';
+      operator: '=' | '>=' | '<=' | '>' | '<';
+      value: unknown;
+    };
 
 const OP_REGEX = /^(>=|<=|>|<|=)(.+)$/;
 

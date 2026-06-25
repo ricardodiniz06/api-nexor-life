@@ -7,5 +7,8 @@ export {
   type FieldQueryConfig,
   type FilterFieldType,
 } from './entity-list-config.type';
-export { type PaginatedResult, type PaginatedMeta } from './paginated-result.type';
+export {
+  type PaginatedResult,
+  type PaginatedMeta,
+} from './paginated-result.type';
 export { normalizePagination } from './normalize-pagination';

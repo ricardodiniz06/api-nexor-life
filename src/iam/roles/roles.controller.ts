@@ -31,7 +31,8 @@ export class RolesController {
   @ApiOperation({
     operationId: 'rolesFindAll',
     summary: 'Listar papéis (perfis RBAC)',
-    description: 'Para preencher seletores no formulário de utilizadores (`roleIds`).',
+    description:
+      'Para preencher seletores no formulário de utilizadores (`roleIds`).',
   })
   @ApiListQuery({
     searchExample: 'name:ADMIN',
