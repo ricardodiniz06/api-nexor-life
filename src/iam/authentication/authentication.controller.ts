@@ -28,9 +28,7 @@ function sessionMeta(req: Request): {
 } {
   const forwarded = req.headers['x-forwarded-for'];
   const ip =
-    typeof forwarded === 'string'
-      ? forwarded.split(',')[0]?.trim()
-      : req.ip;
+    typeof forwarded === 'string' ? forwarded.split(',')[0]?.trim() : req.ip;
   return {
     ipAddress: ip ?? null,
     userAgent:
@@ -48,7 +46,10 @@ export class AuthenticationController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ operationId: 'authSignIn', summary: 'Login (access + refresh)' })
+  @ApiOperation({
+    operationId: 'authSignIn',
+    summary: 'Login (access + refresh)',
+  })
   @ApiOkResponse({ type: AuthTokensResponseDto })
   @ApiUnauthorizedResponse()
   signIn(
@@ -78,7 +79,10 @@ export class AuthenticationController {
   @Public()
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ operationId: 'authSignOut', summary: 'Revogar sessão (refresh)' })
+  @ApiOperation({
+    operationId: 'authSignOut',
+    summary: 'Revogar sessão (refresh)',
+  })
   @ApiUnauthorizedResponse()
   async signOut(@Body() dto: RefreshTokenDto): Promise<void> {
     await this.authentication.signOut(dto.refreshToken);

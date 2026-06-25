@@ -42,9 +42,7 @@ export class SessionService {
     return { session: saved, refreshToken };
   }
 
-  async validateRefreshToken(
-    refreshToken: string,
-  ): Promise<Session> {
+  async validateRefreshToken(refreshToken: string): Promise<Session> {
     const parsed = this.tokens.parseRefreshToken(refreshToken);
     if (!parsed) {
       throw new UnauthorizedException(MSG.refreshTokenInvalid);
@@ -52,7 +50,9 @@ export class SessionService {
 
     const session = await this.sessions.findOne({
       where: { id: parsed.sessionId },
-      relations: { user: { roles: { permissions: true }, professionalProfile: true } },
+      relations: {
+        user: { roles: { permissions: true }, professionalProfile: true },
+      },
     });
     if (!session || session.isRevoked) {
       throw new UnauthorizedException(MSG.refreshTokenInvalid);
@@ -98,9 +98,6 @@ export class SessionService {
     if (!parsed) {
       return;
     }
-    await this.sessions.update(
-      { id: parsed.sessionId },
-      { isRevoked: true },
-    );
+    await this.sessions.update({ id: parsed.sessionId }, { isRevoked: true });
   }
 }

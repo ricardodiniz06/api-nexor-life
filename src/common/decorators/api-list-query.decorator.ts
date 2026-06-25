@@ -8,7 +8,9 @@ type ApiListQueryOptions = {
 };
 
 /** Documentação Swagger padrão para listagens paginadas. */
-export function ApiListQuery(options: ApiListQueryOptions = {}): MethodDecorator {
+export function ApiListQuery(
+  options: ApiListQueryOptions = {},
+): MethodDecorator {
   const {
     searchExample = 'cpf:5466607920,email:546',
     filterExample = 'cpf:5466607920,isActive:true',

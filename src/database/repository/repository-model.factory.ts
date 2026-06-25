@@ -4,7 +4,9 @@ import { RepositoryModel } from './repository.model';
 
 @Injectable()
 export class RepositoryModelFactory {
-  create<T extends ObjectLiteral>(repository: Repository<T>): RepositoryModel<T> {
+  create<T extends ObjectLiteral>(
+    repository: Repository<T>,
+  ): RepositoryModel<T> {
     return new RepositoryModel(repository);
   }
 }

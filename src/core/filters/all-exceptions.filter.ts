@@ -7,7 +7,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { type Request, type Response } from 'express';
-import { HttpExceptionFilter, type ApiErrorBody } from './http-exception.filter';
+import {
+  HttpExceptionFilter,
+  type ApiErrorBody,
+} from './http-exception.filter';
 
 /**
  * Last-resort handler so unknown errors still match the public error contract.
