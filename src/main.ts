@@ -70,6 +70,8 @@ async function bootstrap(): Promise<void> {
       .addTag('auth', 'Autenticação')
       .addTag('users', 'Utilizadores IAM')
       .addTag('roles', 'Papéis RBAC')
+      .addTag('convenios', 'Convênios')
+      .addTag('integrations', 'Integrações externas')
       .build();
 
     const document = SwaggerModule.createDocument(app, swagger);

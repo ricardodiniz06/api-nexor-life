@@ -26,6 +26,8 @@ const httpStatusLabelsPt: Record<string, string> = {
   Conflict: 'Conflito',
   UnprocessableEntity: 'Entidade não processável',
   TooManyRequests: 'Muitas requisições',
+  BadGateway: 'Erro no serviço externo',
+  GatewayTimeout: 'Tempo limite excedido',
   InternalServerError: 'Erro interno do servidor',
 };
 
