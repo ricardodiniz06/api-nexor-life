@@ -12,6 +12,7 @@ import {
 } from '../patients/entities';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction } from '../audit/entities/audit-log.entity';
+import { AnalyticsService } from '../analytics/analytics.service';
 
 @Injectable()
 export class IntegrationsService {
@@ -23,6 +24,7 @@ export class IntegrationsService {
     @InjectRepository(MedicalRecordEntry)
     private readonly recordRepo: Repository<MedicalRecordEntry>,
     private readonly auditService: AuditService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   async seedDefaultIntegrations(): Promise<void> {
@@ -135,6 +137,22 @@ export class IntegrationsService {
     integration.totalSyncedRecords += 1;
     integration.lastError = null;
     const updated = await this.integrationRepo.save(integration);
+
+    // Gravar no MongoDB para agrupamento analitico e relatorios
+    await this.analyticsService.recordEvent({
+      systemKey: integration.systemKey,
+      patientRecordNumber: newPatient.recordNumber,
+      patientName: newPatient.name,
+      eventType: 'CONSULTATION',
+      sector: newPatient.sector,
+      attendingPhysician: newPatient.attendingPhysician ?? undefined,
+      insuranceName: newPatient.insuranceName ?? undefined,
+      rawPayload: {
+        originId: timestamp,
+        system: integration.name,
+        legalBasis: newPatient.legalBasis,
+      },
+    });
 
     if (user) {
       await this.auditService.log({
