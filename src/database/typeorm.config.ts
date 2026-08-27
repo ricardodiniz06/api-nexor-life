@@ -11,6 +11,7 @@ import {
   Session,
   User,
 } from '../iam/entities';
+import { Integration } from '../integrations/entities/integration.entity';
 import {
   MedicalRecordEntry,
   Patient,
@@ -31,6 +32,7 @@ const entityList = [
   PatientAllergy,
   PatientRiskAlert,
   AuditLog,
+  Integration,
 ];
 
 /**

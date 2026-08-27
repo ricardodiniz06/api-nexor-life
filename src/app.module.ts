@@ -4,7 +4,7 @@ import { AuditModule } from './audit/audit.module';
 import { ConveniosModule } from './convenios/convenios.module';
 import { CoreModule } from './core/core.module';
 import { DatabaseModule } from './database/database.module';
-import { BrasilApiModule } from './integrations/brasil-api/brasil-api.module';
+import { IntegrationsModule } from './integrations/integrations.module';
 import { IamModule } from './iam/iam.module';
 import { PatientsModule } from './patients/patients.module';
 
@@ -20,7 +20,7 @@ import { PatientsModule } from './patients/patients.module';
     IamModule,
     ConveniosModule,
     PatientsModule,
-    BrasilApiModule,
+    IntegrationsModule,
   ],
 })
 export class AppModule {}
