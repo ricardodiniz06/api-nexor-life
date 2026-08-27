@@ -2,6 +2,7 @@ import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { config as loadEnv } from 'dotenv';
 import { DataSource, type DataSourceOptions } from 'typeorm';
 import { join } from 'node:path';
+import { AuditLog } from '../audit/entities/audit-log.entity';
 import { Convenio } from '../convenios/entities';
 import {
   Permission,
@@ -10,6 +11,12 @@ import {
   Session,
   User,
 } from '../iam/entities';
+import {
+  MedicalRecordEntry,
+  Patient,
+  PatientAllergy,
+  PatientRiskAlert,
+} from '../patients/entities';
 import { parseSynchronizeFlag } from './parse-synchronize';
 
 const entityList = [
@@ -19,6 +26,11 @@ const entityList = [
   Permission,
   Session,
   Convenio,
+  Patient,
+  MedicalRecordEntry,
+  PatientAllergy,
+  PatientRiskAlert,
+  AuditLog,
 ];
 
 /**
