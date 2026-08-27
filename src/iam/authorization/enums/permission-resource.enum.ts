@@ -5,4 +5,5 @@ export enum PermissionResource {
   PHARMACY = 'PHARMACY',
   CONVENIO = 'CONVENIO',
   SYSTEM = 'SYSTEM',
+  REPORT = 'REPORT',
 }
