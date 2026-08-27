@@ -1,4 +1,9 @@
 import { DynamicModule, Module, type Type } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Convenio } from '../../convenios/entities/convenio.entity';
+import { User } from '../../iam/entities/user.entity';
+import { IngestedEvent, IngestedEventSchema } from '../../analytics/schemas/ingested-event.schema';
 import { REPORT_PROVIDERS } from './constants';
 import { type ReportProvider } from './interfaces/report-provider.interface';
 import { ReportQueryValidator } from './report-query.validator';
@@ -23,6 +28,12 @@ export class ReportsFrameworkModule {
 
     return {
       module: ReportsFrameworkModule,
+      imports: [
+        TypeOrmModule.forFeature([Convenio, User]),
+        MongooseModule.forFeature([
+          { name: IngestedEvent.name, schema: IngestedEventSchema },
+        ]),
+      ],
       providers: [
         ...providerBindings,
         ReportQueryValidator,
