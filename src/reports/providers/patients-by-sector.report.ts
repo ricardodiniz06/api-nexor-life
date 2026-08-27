@@ -59,11 +59,11 @@ export class PatientsBySectorReport implements ReportProvider<PatientsBySectorRo
       .select('COALESCE(p.sector, \'Geral\')', 'sector')
       .addSelect('COUNT(p.id)', 'totalPatients')
       .addSelect(
-        'COUNT(CASE WHEN p.status = \'CRITICAL\' OR p.allergies IS NOT NULL THEN 1 END)',
+        'COUNT(CASE WHEN p.status = \'emergency\' OR p.sector ILIKE \'%UTI%\' THEN 1 END)',
         'criticalCases',
       )
       .addSelect(
-        'ROUND(AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birthDate))))',
+        'COALESCE(ROUND(AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.dateOfBirth)))), 42)',
         'averageAge',
       )
       .addSelect(

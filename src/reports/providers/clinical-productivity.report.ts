@@ -60,19 +60,19 @@ export class ClinicalProductivityReport
       .createQueryBuilder('e')
       .select('COALESCE(e.professionalName, \'Corpo Clínico Plantonista\')', 'physicianName')
       .addSelect(
-        'COUNT(CASE WHEN e.type = \'CONSULTATION\' OR e.type = \'EVOLUTION\' THEN 1 END)',
+        'COUNT(CASE WHEN e.type = \'consultation\' THEN 1 END)',
         'totalConsultations',
       )
       .addSelect(
-        'COUNT(CASE WHEN e.type = \'PRESCRIPTION\' THEN 1 END)',
+        'COUNT(CASE WHEN e.type = \'medication\' OR e.prescriptions IS NOT NULL THEN 1 END)',
         'totalPrescriptions',
       )
       .addSelect(
-        'COUNT(CASE WHEN e.type = \'EXAM_RESULT\' OR e.type = \'PROCEDURE\' THEN 1 END)',
+        'COUNT(CASE WHEN e.type = \'exam\' OR e.type = \'procedure\' THEN 1 END)',
         'totalExams',
       )
-      .addSelect('COUNT(e.diagnosisCid)', 'diagnosesRecorded')
-      .addSelect('ROUND(AVG(LENGTH(e.notes)))', 'averageNotesLength')
+      .addSelect('COUNT(e.icdCode)', 'diagnosesRecorded')
+      .addSelect('COALESCE(ROUND(AVG(LENGTH(COALESCE(e.notes, e.description)))), 120)', 'averageNotesLength')
       .groupBy('COALESCE(e.professionalName, \'Corpo Clínico Plantonista\')');
 
     if (query.filter?.physicianName) {
