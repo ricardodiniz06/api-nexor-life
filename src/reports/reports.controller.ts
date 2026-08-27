@@ -97,8 +97,7 @@ export class ReportsController {
     enum: ['json', 'csv'],
     example: 'json',
   })
-  @ApiOkResponse({ type: ReportExecutionResponseDto })
-  @ApiProduces('text/csv')
+  @ApiProduces('application/json', 'text/csv', 'application/pdf')
   @ApiResponse({ status: 400, description: 'Filtro ou parâmetro inválido' })
   @ApiResponse({ status: 403, description: 'Sem permissão para o relatório' })
   @ApiResponse({ status: 404, description: 'Relatório não encontrado' })
@@ -108,7 +107,7 @@ export class ReportsController {
     @CurrentUser() user: JwtPayload,
   ): Promise<ReportExecutionResponseDto | StreamableFile> {
     const result = await this.runner.run(key, query, user);
-    if (result.kind === 'csv') {
+    if (result.kind === 'csv' || result.kind === 'pdf') {
       return result.file;
     }
     return result.body;

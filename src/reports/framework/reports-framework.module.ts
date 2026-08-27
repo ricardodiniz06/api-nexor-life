@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Convenio } from '../../convenios/entities/convenio.entity';
 import { User } from '../../iam/entities/user.entity';
+import { Patient, MedicalRecordEntry } from '../../patients/entities';
 import { IngestedEvent, IngestedEventSchema } from '../../analytics/schemas/ingested-event.schema';
 import { REPORT_PROVIDERS } from './constants';
 import { type ReportProvider } from './interfaces/report-provider.interface';
@@ -20,7 +21,7 @@ export class ReportsFrameworkModule {
     return {
       module: ReportsFrameworkModule,
       imports: [
-        TypeOrmModule.forFeature([Convenio, User]),
+        TypeOrmModule.forFeature([Convenio, User, Patient, MedicalRecordEntry]),
         MongooseModule.forFeature([
           { name: IngestedEvent.name, schema: IngestedEventSchema },
         ]),

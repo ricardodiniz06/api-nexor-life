@@ -5,6 +5,7 @@ import { type ReportProvider } from './interfaces/report-provider.interface';
 import { ReportQueryValidator } from './report-query.validator';
 import { ReportRegistry } from './report-registry.service';
 import { formatReportAsCsv } from './report-output.formatter';
+import { formatReportAsPdf } from './report-pdf.formatter';
 import { type ReportDefinition } from './types/report-definition.type';
 import { type ReportContext } from './types/report-context.type';
 import {
@@ -21,7 +22,8 @@ export type ReportExecutionResponse<TRow extends Record<string, unknown>> = {
 
 export type ReportRunResult<TRow extends Record<string, unknown>> =
   | { kind: 'json'; body: ReportExecutionResponse<TRow> }
-  | { kind: 'csv'; file: StreamableFile; filename: string };
+  | { kind: 'csv'; file: StreamableFile; filename: string }
+  | { kind: 'pdf'; file: StreamableFile; filename: string };
 
 /**
  * Pipeline fixo do framework: resolver provider → permissão → validar query → executar → formatar.
@@ -68,6 +70,7 @@ export class ReportRunner {
       provider.definition,
       result,
       validatedQuery.format,
+      user,
     );
   }
 
@@ -81,11 +84,12 @@ export class ReportRunner {
     }
   }
 
-  private formatResult<TRow extends Record<string, unknown>>(
+  private async formatResult<TRow extends Record<string, unknown>>(
     definition: ReportDefinition,
     result: ReportResult<TRow>,
     format: ReportOutputFormat,
-  ): ReportRunResult<TRow> {
+    user?: JwtPayload,
+  ): Promise<ReportRunResult<TRow>> {
     if (format === 'csv') {
       const csv = formatReportAsCsv(definition.columns, result.rows);
       const buffer = Buffer.from(csv, 'utf-8');
@@ -95,6 +99,23 @@ export class ReportRunner {
         filename,
         file: new StreamableFile(buffer, {
           type: 'text/csv; charset=utf-8',
+          disposition: `attachment; filename="${filename}"`,
+        }),
+      };
+    }
+
+    if (format === 'pdf') {
+      const pdfBuffer = await formatReportAsPdf(definition, result, {
+        userName: user?.email ? user.email.split('@')[0].toUpperCase() : 'ADMINISTRADOR',
+        userEmail: user?.email ?? 'admin@nexor.life',
+        roleName: user?.roles?.join(', ') || 'ADMINISTRADOR DO SISTEMA',
+      });
+      const filename = `${definition.key}-${result.meta.generatedAt.slice(0, 10)}.pdf`;
+      return {
+        kind: 'pdf',
+        filename,
+        file: new StreamableFile(pdfBuffer, {
+          type: 'application/pdf',
           disposition: `attachment; filename="${filename}"`,
         }),
       };

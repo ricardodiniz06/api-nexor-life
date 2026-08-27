@@ -9,6 +9,9 @@ function parseFormat(raw: unknown): ReportOutputFormat {
   if (raw === 'csv') {
     return 'csv';
   }
+  if (raw === 'pdf') {
+    return 'pdf';
+  }
   return 'json';
 }
 
