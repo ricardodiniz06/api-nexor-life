@@ -17,15 +17,6 @@ export class ReportsFrameworkModule {
    * Cada classe em `providers` deve ser @Injectable() e implementar ReportProvider.
    */
   static register(providerClasses: Array<Type<ReportProvider>>): DynamicModule {
-    const providerBindings = providerClasses.flatMap((ProviderClass) => [
-      ProviderClass,
-      {
-        provide: REPORT_PROVIDERS,
-        useExisting: ProviderClass,
-        multi: true,
-      } as const,
-    ]);
-
     return {
       module: ReportsFrameworkModule,
       imports: [
@@ -35,7 +26,12 @@ export class ReportsFrameworkModule {
         ]),
       ],
       providers: [
-        ...providerBindings,
+        ...providerClasses,
+        {
+          provide: REPORT_PROVIDERS,
+          useFactory: (...instances: ReportProvider[]) => instances,
+          inject: providerClasses,
+        },
         ReportQueryValidator,
         ReportRegistry,
         ReportRunner,

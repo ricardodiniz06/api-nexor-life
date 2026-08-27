@@ -13,8 +13,10 @@ export class ReportRegistry {
     providers: ReportProvider[],
   ) {
     this.byKey = new Map();
-    for (const provider of providers) {
-      const key = provider.definition.key;
+    const list = Array.isArray(providers) ? providers : [];
+    for (const provider of list) {
+      const key = provider.definition?.key;
+      if (!key) continue;
       if (this.byKey.has(key)) {
         throw new Error(`Relatório duplicado registrado: ${key}`);
       }
